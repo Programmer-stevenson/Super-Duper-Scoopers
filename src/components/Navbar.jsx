@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { nav, company } from '../data/content'
 import Button from './ui/Button'
@@ -9,6 +9,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -27,6 +28,20 @@ export default function Navbar() {
       document.body.style.overflow = ''
     }
   }, [open])
+
+  // "Areas" link: go to the Contact page, then ease down to the service-area
+  // section. Retries briefly so it still works while the page is transitioning in.
+  const scrollToServiceArea = (tries = 0) => {
+    const el = document.getElementById('service-area')
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+    else if (tries < 12) setTimeout(() => scrollToServiceArea(tries + 1), 120)
+  }
+
+  const goToAreas = () => {
+    setOpen(false)
+    navigate('/contact')
+    setTimeout(() => scrollToServiceArea(), 300)
+  }
 
   return (
     <motion.header
@@ -84,6 +99,13 @@ export default function Navbar() {
                 )}
               </NavLink>
             ))}
+            <button
+              type="button"
+              onClick={goToAreas}
+              className="relative px-4 py-2 text-[15px] font-semibold text-slate transition-colors hover:text-ink"
+            >
+              Areas
+            </button>
           </div>
 
           <div className="hidden md:block">
@@ -116,7 +138,7 @@ export default function Navbar() {
             className="fixed inset-0 top-[72px] z-40 bg-canvas md:hidden"
           >
             <motion.div
-              className="container-px flex flex-col gap-1 pt-6"
+              className="container-px flex flex-col items-center gap-1 pt-8 text-center"
               initial="hidden"
               animate="show"
               variants={{ show: { transition: { staggerChildren: 0.07 } } }}
@@ -124,15 +146,16 @@ export default function Navbar() {
               {nav.map((item) => (
                 <motion.div
                   key={item.to}
+                  className="w-full"
                   variants={{
-                    hidden: { opacity: 0, x: -16 },
-                    show: { opacity: 1, x: 0 },
+                    hidden: { opacity: 0, y: 12 },
+                    show: { opacity: 1, y: 0 },
                   }}
                 >
                   <NavLink
                     to={item.to}
                     className={({ isActive }) =>
-                      `block rounded-2xl px-5 py-4 font-display text-2xl font-bold tracking-tight ${
+                      `block rounded-2xl px-5 py-4 text-center font-display text-2xl font-bold tracking-tight ${
                         isActive ? 'bg-emerald-50 text-forest' : 'text-ink'
                       }`
                     }
@@ -142,15 +165,30 @@ export default function Navbar() {
                 </motion.div>
               ))}
               <motion.div
-                variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
-                className="mt-6 px-2"
+                className="w-full"
+                variants={{
+                  hidden: { opacity: 0, y: 12 },
+                  show: { opacity: 1, y: 0 },
+                }}
               >
-                <Button to="/contact" size="lg" arrow className="w-full">
+                <button
+                  type="button"
+                  onClick={goToAreas}
+                  className="block w-full rounded-2xl px-5 py-4 text-center font-display text-2xl font-bold tracking-tight text-ink"
+                >
+                  Areas
+                </button>
+              </motion.div>
+              <motion.div
+                variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}
+                className="mt-8 flex flex-col items-center gap-6"
+              >
+                <Button to="/contact" size="lg" arrow>
                   Get Free Quote
                 </Button>
                 <a
                   href={company.phoneHref}
-                  className="mt-6 flex items-center justify-center gap-2 text-slate"
+                  className="flex items-center justify-center gap-2 text-slate"
                 >
                   <Icon.phone className="w-5 h-5 text-emerald-600" />
                   <span className="font-semibold">{company.phone}</span>

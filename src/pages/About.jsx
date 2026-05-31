@@ -58,7 +58,7 @@ function AboutHero() {
           >
             Super Duper Scooper began when our founder got tired of choosing
             between playing with his dogs and policing the yard. What started as
-            a favor for a few neighbors became a service trusted by thousands.
+            a favor for a few neighbors became a service trusted by many.
           </motion.p>
         </div>
       </div>
@@ -160,7 +160,7 @@ function Values() {
           lead="Four principles guide every route we run and every home we visit."
         />
         <motion.div
-          className="mt-16 grid gap-6 sm:grid-cols-2"
+          className="mt-12 grid grid-cols-2 gap-4 sm:mt-16 sm:gap-6"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
@@ -174,13 +174,13 @@ function Values() {
                 variants={staggerItem}
                 whileHover={{ y: -5 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="flex gap-5 rounded-3xl border border-ink/5 bg-white p-8 shadow-soft"
+                className="flex flex-col gap-4 rounded-3xl border border-ink/5 bg-white p-5 shadow-soft sm:flex-row sm:gap-5 sm:p-8"
               >
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
-                  {Glyph && <Glyph className="w-7 h-7" />}
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 sm:h-14 sm:w-14">
+                  {Glyph && <Glyph className="w-6 h-6 sm:w-7 sm:h-7" />}
                 </span>
                 <div>
-                  <h3 className="font-display text-xl font-bold text-ink">
+                  <h3 className="font-display text-base font-bold text-ink sm:text-xl">
                     {v.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate">

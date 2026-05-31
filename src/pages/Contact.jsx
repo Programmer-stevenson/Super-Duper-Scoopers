@@ -398,7 +398,7 @@ function ContactHero() {
 
 function ServiceArea() {
   return (
-    <section className="relative bg-white py-24">
+    <section id="service-area" className="relative scroll-mt-20 bg-white py-24">
       <div className="max-w-site container-px">
         <SectionHeading
           eyebrow="Service area"

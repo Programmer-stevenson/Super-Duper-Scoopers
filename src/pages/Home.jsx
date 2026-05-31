@@ -7,6 +7,7 @@ import Reveal, { stagger, staggerItem } from '../components/ui/Reveal'
 import SectionHeading from '../components/ui/SectionHeading'
 import Icon from '../components/ui/Icon'
 import usePageTitle from '../hooks/usePageTitle'
+import PromoPopup from '../components/PromoPopup'
 import { company, services, whyChoose, serviceAreas } from '../data/content'
 
 // Hero stats — positive, non-rating business proof points.
@@ -29,6 +30,10 @@ const FREQ_OPTIONS = [
   { id: 'monthly', label: 'Once a month', perMonth: 1 },
 ]
 const DEODORIZE_PRICE = 7
+const FIRST_TIME_DISCOUNT = 0.5 // 50% off the first visit
+
+// Format money without trailing .00 (but keeps cents when needed, e.g. $10.50).
+const money = (n) => (Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`)
 
 function Hero() {
   return (
@@ -52,7 +57,7 @@ function Hero() {
             </motion.span>
 
             <motion.h1
-              className="display mt-5 text-5xl font-extrabold text-ink sm:text-6xl lg:text-7xl text-balance"
+              className="display mt-5 text-center text-5xl font-extrabold text-ink sm:text-6xl lg:text-left lg:text-7xl text-balance"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -185,27 +190,37 @@ function QuoteCalculator() {
   const [dogs, setDogs] = useState('1')
   const [freq, setFreq] = useState('weekly')
   const [deodorize, setDeodorize] = useState(false)
+  const [firstTime, setFirstTime] = useState(false)
 
   const dogOpt = DOG_OPTIONS.find((d) => d.id === dogs)
   const freqOpt = FREQ_OPTIONS.find((f) => f.id === freq)
-  const perVisit = dogOpt.base + (deodorize ? DEODORIZE_PRICE : 0)
-  const monthly = perVisit * freqOpt.perMonth
+
+  const regularVisit = dogOpt.base + (deodorize ? DEODORIZE_PRICE : 0)
+  const firstVisit = firstTime ? regularVisit * (1 - FIRST_TIME_DISCOUNT) : regularVisit
+  const monthly = regularVisit * freqOpt.perMonth // recurring at the regular rate
 
   const handleGetQuote = () => {
     const params = new URLSearchParams({
       dogs,
       frequency: freq,
       deodorize: String(deodorize),
+      firstTime: String(firstTime),
     })
+    let summary = `${dogOpt.label}, ${freqOpt.label.toLowerCase()} service${
+      deodorize ? ' + deodorizing spray' : ''
+    } — ${money(regularVisit)}/visit (about ${money(monthly)}/month)`
+    if (firstTime) {
+      summary += `. First-time customer: 50% off the first visit (${money(firstVisit)}).`
+    }
     const quote = {
       dogs: dogOpt.label,
       frequency: freqOpt.label,
       deodorize,
-      perVisit,
+      firstTime,
+      perVisit: regularVisit,
+      firstVisit,
       monthly,
-      summary: `${dogOpt.label}, ${freqOpt.label.toLowerCase()} service${
-        deodorize ? ' + deodorizing spray' : ''
-      } — $${perVisit}/visit (about $${monthly}/month)`,
+      summary,
     }
     navigate(`/contact?${params.toString()}`, { state: { quote } })
   }
@@ -215,6 +230,16 @@ function QuoteCalculator() {
       active
         ? 'border-emerald-500 bg-emerald-50 text-forest shadow-sm'
         : 'border-ink/10 bg-white text-slate hover:border-ink/25'
+    }`
+
+  const toggle = (active) =>
+    `flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${
+      active ? 'border-emerald-500 bg-emerald-50' : 'border-ink/10 bg-white hover:border-ink/25'
+    }`
+
+  const checkbox = (active) =>
+    `flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
+      active ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-ink/20'
     }`
 
   return (
@@ -264,23 +289,14 @@ function QuoteCalculator() {
                 </div>
               </div>
 
+              {/* Deodorizing add-on */}
               <button
                 type="button"
                 onClick={() => setDeodorize((v) => !v)}
                 aria-pressed={deodorize}
-                className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${
-                  deodorize
-                    ? 'border-emerald-500 bg-emerald-50'
-                    : 'border-ink/10 bg-white hover:border-ink/25'
-                }`}
+                className={toggle(deodorize)}
               >
-                <span
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
-                    deodorize
-                      ? 'border-emerald-500 bg-emerald-500 text-white'
-                      : 'border-ink/20'
-                  }`}
-                >
+                <span className={checkbox(deodorize)}>
                   {deodorize && <Icon.check className="h-4 w-4" />}
                 </span>
                 <span className="flex-1">
@@ -290,6 +306,27 @@ function QuoteCalculator() {
                   </span>
                   <span className="mt-0.5 block text-sm text-slate">
                     Neutralizes odor and helps clear bacteria so the yard smells fresh.
+                  </span>
+                </span>
+              </button>
+
+              {/* First-time customer discount */}
+              <button
+                type="button"
+                onClick={() => setFirstTime((v) => !v)}
+                aria-pressed={firstTime}
+                className={toggle(firstTime)}
+              >
+                <span className={checkbox(firstTime)}>
+                  {firstTime && <Icon.check className="h-4 w-4" />}
+                </span>
+                <span className="flex-1">
+                  <span className="block font-semibold text-ink">
+                    First-time customer{' '}
+                    <span className="text-emerald-600">50% off first visit</span>
+                  </span>
+                  <span className="mt-0.5 block text-sm text-slate">
+                    New to us? Your very first cleanup is half price.
                   </span>
                 </span>
               </button>
@@ -303,22 +340,37 @@ function QuoteCalculator() {
                   <Icon.paw className="h-4 w-4" />
                   Your estimate
                 </span>
-                <div className="mt-5 flex items-end gap-1.5">
+                <div className="mt-5 flex items-end gap-2">
                   <motion.span
-                    key={perVisit}
+                    key={firstVisit}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.25 }}
                     className="display text-6xl font-extrabold leading-none"
                   >
-                    ${perVisit}
+                    {money(firstVisit)}
                   </motion.span>
-                  <span className="mb-1 text-lg text-white/70">/ visit</span>
+                  {firstTime && (
+                    <span className="mb-1 text-lg text-white/40 line-through">
+                      {money(regularVisit)}
+                    </span>
+                  )}
+                  <span className="mb-1 text-lg text-white/70">
+                    / {firstTime ? 'first visit' : 'visit'}
+                  </span>
                 </div>
                 <p className="mt-3 text-white/80">
-                  About{' '}
-                  <span className="font-semibold text-white">${monthly}/month</span> at{' '}
-                  {freqOpt.label.toLowerCase()}.
+                  {firstTime && (
+                    <>
+                      Then{' '}
+                      <span className="font-semibold text-white">
+                        {money(regularVisit)}/visit
+                      </span>{' '}
+                      ·{' '}
+                    </>
+                  )}
+                  About <span className="font-semibold text-white">{money(monthly)}/month</span>{' '}
+                  at {freqOpt.label.toLowerCase()}.
                 </p>
 
                 <ul className="mt-6 space-y-2 border-t border-white/15 pt-5 text-sm text-white/75">
@@ -330,6 +382,12 @@ function QuoteCalculator() {
                     <li className="flex justify-between">
                       <span>Deodorizing spray</span>
                       <span className="font-semibold text-white">+${DEODORIZE_PRICE}/visit</span>
+                    </li>
+                  )}
+                  {firstTime && (
+                    <li className="flex justify-between text-emerald-300">
+                      <span>First-time discount</span>
+                      <span className="font-semibold">−50% first visit</span>
                     </li>
                   )}
                   <li className="flex justify-between">
@@ -398,8 +456,6 @@ function Services() {
   )
 }
 
-
-
 export function FinalCTA() {
   return (
     <section className="relative bg-canvas py-24">
@@ -445,10 +501,10 @@ export default function Home() {
   )
   return (
     <PageTransition>
+      <PromoPopup />
       <Hero />
       <QuoteCalculator />
       <Services />
-      
       <FinalCTA />
     </PageTransition>
   )

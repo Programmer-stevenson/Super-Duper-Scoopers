@@ -39,9 +39,30 @@ export default function Footer() {
                 <Icon.star key={i} className="w-4 h-4" />
               ))}
             </span>
-            <span className="text-sm font-semibold text-white/80">
-              4.9 / 5 from 800+ neighbors
-            </span>
+          </div>
+
+          {/* Socials — add your profile URLs in the href below */}
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <a
+              href="https://www.facebook.com/profile.php?id=61575432124664"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Super Duper Scooper on Facebook"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/80 ring-1 ring-white/10 transition hover:bg-emerald-500 hover:text-white"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                <path d="M22 12a10 10 0 1 0-11.563 9.876v-6.987H7.898V12h2.539V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.261c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.889h-2.33v6.987A10.002 10.002 0 0 0 22 12z" />
+              </svg>
+            </a>
+            <a
+              href="#"
+              aria-label="Super Duper Scooper on TikTok"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/80 ring-1 ring-white/10 transition hover:bg-emerald-500 hover:text-white"
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                <path d="M16.5 3c.27 1.94 1.46 3.46 3.5 3.66v2.43c-1.18.05-2.3-.27-3.5-.95v5.66c0 4.06-3.7 6.78-7.36 5.32A5.45 5.45 0 0 1 5.7 13.1c.5-2.2 2.48-3.78 4.8-3.7v2.5a2.96 2.96 0 0 0-2.3 2.86 2.93 2.93 0 0 0 5.86.12V3h2.44z" />
+              </svg>
+            </a>
           </div>
 
           {/* Nav links */}
@@ -106,6 +127,21 @@ export default function Footer() {
 
         {/* ===== Bottom bar ===== */}
         <div className="mt-14 flex flex-col items-center gap-3 border-t border-white/10 pt-7 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <Link
+              to="/terms"
+              className="text-xs text-white/50 transition-colors hover:text-emerald-400"
+            >
+              Terms of Service
+            </Link>
+            <span className="text-white/20" aria-hidden="true">·</span>
+            <Link
+              to="/privacy"
+              className="text-xs text-white/50 transition-colors hover:text-emerald-400"
+            >
+              Privacy Policy
+            </Link>
+          </div>
           <p className="text-xs text-white/40">
             © {year} {company.name}. All rights reserved.
           </p>
