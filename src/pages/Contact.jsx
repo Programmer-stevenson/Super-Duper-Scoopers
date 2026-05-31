@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import PageTransition from '../components/PageTransition'
 import Button from '../components/ui/Button'
@@ -9,6 +10,34 @@ import usePageTitle from '../hooks/usePageTitle'
 import { company, serviceAreas } from '../data/content'
 
 const initialForm = { name: '', email: '', phone: '', message: '' }
+
+// Labels used to rebuild a readable message from the quote URL params
+// (e.g. if someone refreshes the Contact page and router state is gone).
+const DOG_LABELS = { '1': '1 dog', '2': '2 dogs', '3': '3+ dogs' }
+const FREQ_LABELS = {
+  twice: 'twice a week',
+  weekly: 'weekly',
+  biweekly: 'every other week',
+  monthly: 'once a month',
+}
+
+// Build a pre-filled message from the quote calculator, if one was passed.
+function buildQuoteMessage(state, params) {
+  const quote = state?.quote
+  if (quote?.summary) {
+    return `Hi! I'd like to get started with this plan from your quote tool: ${quote.summary}.`
+  }
+  const dogs = params.get('dogs')
+  if (dogs) {
+    const deo = params.get('deodorize') === 'true'
+    const dogLabel = DOG_LABELS[dogs] || `${dogs} dogs`
+    const freqLabel = FREQ_LABELS[params.get('frequency')] || params.get('frequency') || 'regular'
+    return `Hi! I'd like a quote for ${dogLabel}, ${freqLabel} service${
+      deo ? ' with deodorizing spray' : ''
+    }.`
+  }
+  return ''
+}
 
 function validate(values) {
   const errors = {}
@@ -37,7 +66,12 @@ const fields = [
 ]
 
 function ContactForm() {
-  const [values, setValues] = useState(initialForm)
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  // Pre-filled message from the home-page quote calculator (if any).
+  const quoteMessage = buildQuoteMessage(location.state, searchParams)
+
+  const [values, setValues] = useState({ ...initialForm, message: quoteMessage })
   const [errors, setErrors] = useState({})
   const [touched, setTouched] = useState({})
   const [status, setStatus] = useState('idle') // idle | submitting | success | error
@@ -122,6 +156,17 @@ function ContactForm() {
             noValidate
             className="space-y-5"
           >
+            {/* Quote-prefilled confirmation banner */}
+            {quoteMessage && (
+              <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-forest">
+                <Icon.check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                <span>
+                  We've added your quote below — just fill in your details and hit
+                  send, and we'll lock it in.
+                </span>
+              </div>
+            )}
+
             {fields.map((f) => (
               <div key={f.name}>
                 <label

@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import PageTransition from '../components/PageTransition'
 import Button from '../components/ui/Button'
@@ -13,6 +15,20 @@ const heroStats = [
   { value: 'Same-Day', label: 'Free quotes' },
   { value: '100%', label: 'Satisfaction guarantee' },
 ]
+
+// ===== Pricing model =====
+const DOG_OPTIONS = [
+  { id: '1', label: '1 dog', base: 18 },
+  { id: '2', label: '2 dogs', base: 21 },
+  { id: '3', label: '3+ dogs', base: 25 },
+]
+const FREQ_OPTIONS = [
+  { id: 'twice', label: 'Twice a week', perMonth: 8 },
+  { id: 'weekly', label: 'Weekly', perMonth: 4 },
+  { id: 'biweekly', label: 'Every other week', perMonth: 2 },
+  { id: 'monthly', label: 'Once a month', perMonth: 1 },
+]
+const DEODORIZE_PRICE = 7
 
 function Hero() {
   return (
@@ -80,7 +96,7 @@ function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.52 }}
             >
-              <Button to="/contact" size="lg" arrow>
+              <Button href="#quote" size="lg" arrow>
                 Get Free Quote
               </Button>
               <Button href={company.phoneHref} size="lg" variant="outline">
@@ -164,6 +180,179 @@ function Hero() {
   )
 }
 
+function QuoteCalculator() {
+  const navigate = useNavigate()
+  const [dogs, setDogs] = useState('1')
+  const [freq, setFreq] = useState('weekly')
+  const [deodorize, setDeodorize] = useState(false)
+
+  const dogOpt = DOG_OPTIONS.find((d) => d.id === dogs)
+  const freqOpt = FREQ_OPTIONS.find((f) => f.id === freq)
+  const perVisit = dogOpt.base + (deodorize ? DEODORIZE_PRICE : 0)
+  const monthly = perVisit * freqOpt.perMonth
+
+  const handleGetQuote = () => {
+    const params = new URLSearchParams({
+      dogs,
+      frequency: freq,
+      deodorize: String(deodorize),
+    })
+    const quote = {
+      dogs: dogOpt.label,
+      frequency: freqOpt.label,
+      deodorize,
+      perVisit,
+      monthly,
+      summary: `${dogOpt.label}, ${freqOpt.label.toLowerCase()} service${
+        deodorize ? ' + deodorizing spray' : ''
+      } — $${perVisit}/visit (about $${monthly}/month)`,
+    }
+    navigate(`/contact?${params.toString()}`, { state: { quote } })
+  }
+
+  const pill = (active) =>
+    `rounded-2xl border px-4 py-3 text-sm font-semibold transition-all ${
+      active
+        ? 'border-emerald-500 bg-emerald-50 text-forest shadow-sm'
+        : 'border-ink/10 bg-white text-slate hover:border-ink/25'
+    }`
+
+  return (
+    <section id="quote" className="relative scroll-mt-24 bg-canvas py-24">
+      <div className="max-w-site container-px">
+        <SectionHeading
+          eyebrow="Instant quote"
+          title="Build your plan, see your price"
+          lead="No calls, no waiting. Tell us how many dogs you have and how often you'd like us out — your flat price shows up instantly."
+        />
+
+        <Reveal className="mt-14">
+          <div className="grid gap-8 rounded-[2rem] border border-ink/5 bg-white p-6 shadow-soft sm:p-10 lg:grid-cols-[1.15fr_1fr]">
+            {/* Selectors */}
+            <div className="space-y-8">
+              <div>
+                <p className="text-sm font-semibold text-ink">How many dogs?</p>
+                <div className="mt-3 grid grid-cols-3 gap-3">
+                  {DOG_OPTIONS.map((d) => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => setDogs(d.id)}
+                      aria-pressed={dogs === d.id}
+                      className={pill(dogs === d.id)}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-ink">How often?</p>
+                <div className="mt-3 grid grid-cols-2 gap-3">
+                  {FREQ_OPTIONS.map((f) => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => setFreq(f.id)}
+                      aria-pressed={freq === f.id}
+                      className={pill(freq === f.id)}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setDeodorize((v) => !v)}
+                aria-pressed={deodorize}
+                className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${
+                  deodorize
+                    ? 'border-emerald-500 bg-emerald-50'
+                    : 'border-ink/10 bg-white hover:border-ink/25'
+                }`}
+              >
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-colors ${
+                    deodorize
+                      ? 'border-emerald-500 bg-emerald-500 text-white'
+                      : 'border-ink/20'
+                  }`}
+                >
+                  {deodorize && <Icon.check className="h-4 w-4" />}
+                </span>
+                <span className="flex-1">
+                  <span className="block font-semibold text-ink">
+                    Add deodorizing spray{' '}
+                    <span className="text-emerald-600">+${DEODORIZE_PRICE}/visit</span>
+                  </span>
+                  <span className="mt-0.5 block text-sm text-slate">
+                    Neutralizes odor and helps clear bacteria so the yard smells fresh.
+                  </span>
+                </span>
+              </button>
+            </div>
+
+            {/* Price panel */}
+            <div className="relative flex flex-col overflow-hidden rounded-[1.5rem] bg-forest p-8 text-white">
+              <div className="pointer-events-none absolute -right-8 -top-8 h-40 w-40 rounded-full bg-emerald-400/20 blur-3xl" />
+              <div className="relative">
+                <span className="eyebrow text-emerald-300">
+                  <Icon.paw className="h-4 w-4" />
+                  Your estimate
+                </span>
+                <div className="mt-5 flex items-end gap-1.5">
+                  <motion.span
+                    key={perVisit}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="display text-6xl font-extrabold leading-none"
+                  >
+                    ${perVisit}
+                  </motion.span>
+                  <span className="mb-1 text-lg text-white/70">/ visit</span>
+                </div>
+                <p className="mt-3 text-white/80">
+                  About{' '}
+                  <span className="font-semibold text-white">${monthly}/month</span> at{' '}
+                  {freqOpt.label.toLowerCase()}.
+                </p>
+
+                <ul className="mt-6 space-y-2 border-t border-white/15 pt-5 text-sm text-white/75">
+                  <li className="flex justify-between">
+                    <span>{dogOpt.label} · base rate</span>
+                    <span className="font-semibold text-white">${dogOpt.base}/visit</span>
+                  </li>
+                  {deodorize && (
+                    <li className="flex justify-between">
+                      <span>Deodorizing spray</span>
+                      <span className="font-semibold text-white">+${DEODORIZE_PRICE}/visit</span>
+                    </li>
+                  )}
+                  <li className="flex justify-between">
+                    <span>Visits per month</span>
+                    <span className="font-semibold text-white">{freqOpt.perMonth}</span>
+                  </li>
+                </ul>
+              </div>
+
+              <Button onClick={handleGetQuote} size="lg" arrow className="relative mt-8 w-full">
+                Get this quote
+              </Button>
+              <p className="relative mt-3 text-center text-xs text-white/50">
+                Flat pricing · no contracts · cancel anytime
+              </p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 function Services() {
   return (
     <section className="relative bg-canvas py-24">
@@ -209,58 +398,7 @@ function Services() {
   )
 }
 
-function WhyChoose() {
-  return (
-    <section className="relative bg-canvas py-24">
-      <div className="max-w-site container-px">
-        <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="lg:sticky lg:top-28">
-            <SectionHeading
-              align="left"
-              eyebrow="Why choose us"
-              title="The most dependable crew on your street"
-              lead="We obsess over the boring details — showing up, communicating, and protecting your home — because that is what makes a service worth keeping."
-            />
-            <Reveal delay={0.15} className="mt-8">
-              <Button to="/about" variant="dark" arrow>
-                Meet the team
-              </Button>
-            </Reveal>
-          </div>
 
-          <motion.div
-            className="grid grid-cols-2 gap-4 sm:gap-5"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: '-60px' }}
-            variants={stagger}
-          >
-            {whyChoose.map((item) => {
-              const Glyph = Icon[item.icon]
-              return (
-                <motion.div
-                  key={item.title}
-                  variants={staggerItem}
-                  className="rounded-3xl border border-ink/5 bg-white p-5 shadow-soft sm:p-7"
-                >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest/5 text-forest sm:h-12 sm:w-12">
-                    {Glyph && <Glyph className="w-6 h-6" />}
-                  </span>
-                  <h3 className="mt-4 font-display text-base font-bold text-ink sm:mt-5 sm:text-lg">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate">
-                    {item.description}
-                  </p>
-                </motion.div>
-              )
-            })}
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  )
-}
 
 export function FinalCTA() {
   return (
@@ -285,7 +423,7 @@ export function FinalCTA() {
                 just a clean yard and a happy dog.
               </p>
               <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-                <Button to="/contact" size="lg" arrow>
+                <Button href="#quote" size="lg" arrow>
                   Get Free Quote
                 </Button>
                 <Button href={company.phoneHref} size="lg" variant="ghost">
@@ -308,8 +446,9 @@ export default function Home() {
   return (
     <PageTransition>
       <Hero />
+      <QuoteCalculator />
       <Services />
-      <WhyChoose />
+      
       <FinalCTA />
     </PageTransition>
   )

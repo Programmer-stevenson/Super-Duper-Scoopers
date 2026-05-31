@@ -53,14 +53,14 @@ export default function Loader({ onComplete }) {
               transition={{ type: 'spring', stiffness: 220, damping: 16, delay: 0.1 }}
             >
               <motion.div
-                className="relative overflow-hidden rounded-[2rem] bg-white p-3 shadow-glow ring-1 ring-emerald-500/30"
+                className="relative overflow-hidden rounded-full shadow-glow"
                 animate={{ y: [0, -9, 0] }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.6 }}
               >
                 <img
-                  src="/assets/logo-scooper.png"
+                  src="/assets/logo-badge.png"
                   alt="Super Duper Scooper"
-                  className="h-44 w-auto select-none sm:h-52"
+                  className="h-48 w-48 select-none sm:h-56 sm:w-56"
                   draggable="false"
                 />
                 {/* Sweeping shimmer */}
@@ -70,7 +70,7 @@ export default function Loader({ onComplete }) {
                   animate={{ x: '130%' }}
                   transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.6, ease: 'easeInOut', delay: 0.7 }}
                 >
-                  <div className="h-full w-1/3 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+                  <div className="h-full w-1/3 skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/40 to-transparent" />
                 </motion.div>
               </motion.div>
             </motion.div>
