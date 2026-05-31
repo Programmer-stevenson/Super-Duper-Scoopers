@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLocation, useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import PageTransition from '../components/PageTransition'
 import Button from '../components/ui/Button'
@@ -67,9 +67,18 @@ const fields = [
 
 function ContactForm() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   // Pre-filled message from the home-page quote calculator (if any).
   const quoteMessage = buildQuoteMessage(location.state, searchParams)
+
+  // Send the visitor to the home-page quote calculator and ease them down to it.
+  const goToCalculator = () => {
+    navigate('/')
+    setTimeout(() => {
+      document.getElementById('quote')?.scrollIntoView({ behavior: 'smooth' })
+    }, 450)
+  }
 
   const [values, setValues] = useState({ ...initialForm, message: quoteMessage })
   const [errors, setErrors] = useState({})
@@ -156,14 +165,32 @@ function ContactForm() {
             noValidate
             className="space-y-5"
           >
-            {/* Quote-prefilled confirmation banner */}
-            {quoteMessage && (
+            {/* Quote banner: confirmation if a quote came through, otherwise a prompt to use the calculator */}
+            {quoteMessage ? (
               <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-forest">
                 <Icon.check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
                 <span>
                   We've added your quote below — just fill in your details and hit
                   send, and we'll lock it in.
                 </span>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <Icon.paw className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                  <span className="text-sm text-forest">
+                    Want pricing first? Get an instant estimate in seconds.
+                  </span>
+                </div>
+                <Button
+                  type="button"
+                  onClick={goToCalculator}
+                  size="sm"
+                  arrow
+                  className="shrink-0"
+                >
+                  Use our quote calculator
+                </Button>
               </div>
             )}
 
