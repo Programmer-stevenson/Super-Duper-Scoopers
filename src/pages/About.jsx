@@ -5,7 +5,14 @@ import SectionHeading from '../components/ui/SectionHeading'
 import Icon from '../components/ui/Icon'
 import { FinalCTA } from './Home'
 import usePageTitle from '../hooks/usePageTitle'
-import { values, team, heroStats } from '../data/content'
+import { values } from '../data/content'
+
+// Proof points — positive, non-rating business stats.
+const heroStats = [
+  { value: '500+', label: 'Yards scooped' },
+  { value: 'Same-Day', label: 'Free quotes' },
+  { value: '100%', label: 'Satisfaction guarantee' },
+]
 
 function AboutHero() {
   return (
@@ -14,11 +21,21 @@ function AboutHero() {
       <div className="pointer-events-none absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-emerald-500/15 blur-[120px]" />
       <div className="relative max-w-site container-px py-20 lg:py-28">
         <div className="mx-auto max-w-3xl text-center">
+          {/* Super Duper Scooper logo as the hero image */}
+          <motion.div
+            className="mx-auto mb-9 inline-block"
+            initial={{ opacity: 0, scale: 0.9, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+          >
+            
+          </motion.div>
+
           <motion.span
             className="eyebrow text-emerald-400"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <Icon.leaf className="w-4 h-4" />
             Our story
@@ -27,7 +44,7 @@ function AboutHero() {
             className="display mt-5 text-5xl font-extrabold sm:text-6xl text-balance"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             Started in one backyard.
             <br />
@@ -37,7 +54,7 @@ function AboutHero() {
             className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-white/70"
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
             Super Duper Scooper began when our founder got tired of choosing
             between playing with his dogs and policing the yard. What started as
@@ -58,7 +75,7 @@ function Story() {
             <div className="relative">
               <div className="absolute -inset-4 -z-10 rounded-[2.5rem] bg-emerald-500/10 blur-2xl" />
               <img
-                src="/assets/hero-retriever.png"
+                src="/assets/logo-scooper.png"
                 alt="A golden retriever enjoying a clean, healthy backyard lawn"
                 className="h-[440px] w-full rounded-[2rem] object-cover shadow-lift ring-1 ring-ink/5"
               />
@@ -179,8 +196,6 @@ function Values() {
   )
 }
 
-
-
 export default function About() {
   usePageTitle(
     'About — Super Duper Scooper',
@@ -192,7 +207,6 @@ export default function About() {
       <Story />
       <Mission />
       <Values />
-      
       <FinalCTA />
     </PageTransition>
   )

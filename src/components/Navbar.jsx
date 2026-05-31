@@ -36,10 +36,10 @@ export default function Navbar() {
       className="fixed inset-x-0 top-0 z-50"
     >
       <div
-        className={`transition-all duration-300 ${
+        className={`bg-gradient-to-r from-emerald-100/90 via-emerald-50/85 to-emerald-100/90 backdrop-blur-xl transition-all duration-300 ${
           scrolled
-            ? 'border-b border-ink/5 bg-canvas/80 backdrop-blur-xl'
-            : 'border-b border-transparent bg-transparent'
+            ? 'border-b border-emerald-600/10 shadow-[0_6px_24px_-12px_rgba(6,95,70,0.25)]'
+            : 'border-b border-transparent'
         }`}
       >
         <nav className="max-w-site container-px flex h-[72px] items-center justify-between">
@@ -49,8 +49,8 @@ export default function Navbar() {
               alt=""
               className="h-12 w-12 object-contain drop-shadow-sm"
             />
-            <span className="hidden sm:block leading-tight">
-              <span className="block font-display text-[17px] font-extrabold tracking-tightest text-ink">
+            <span className="block leading-tight">
+              <span className="block font-display text-[15px] font-extrabold tracking-tightest text-ink sm:text-[17px]">
                 Super Duper Scooper
               </span>
               <span className="block text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-600">

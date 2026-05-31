@@ -5,15 +5,14 @@ import Reveal, { stagger, staggerItem } from '../components/ui/Reveal'
 import SectionHeading from '../components/ui/SectionHeading'
 import Icon from '../components/ui/Icon'
 import usePageTitle from '../hooks/usePageTitle'
-import {
-  company,
-  heroStats,
-  services,
-  whyChoose,
-  steps,
-  testimonials,
-  serviceAreas,
-} from '../data/content'
+import { company, services, whyChoose, serviceAreas } from '../data/content'
+
+// Hero stats — positive, non-rating business proof points.
+const heroStats = [
+  { value: '500+', label: 'Yards scooped' },
+  { value: 'Same-Day', label: 'Free quotes' },
+  { value: '100%', label: 'Satisfaction guarantee' },
+]
 
 function Hero() {
   return (
@@ -24,7 +23,7 @@ function Hero() {
 
       <div className="relative max-w-site container-px">
         <div className="grid items-center gap-12 py-16 lg:grid-cols-2 lg:py-24">
-          {/* Copy */}
+          {/* Copy column */}
           <div>
             <motion.span
               className="eyebrow"
@@ -47,8 +46,25 @@ function Hero() {
               <span className="text-forest">A happy dog.</span>
             </motion.h1>
 
+            {/* MOBILE-ONLY hero image — sits between the headline and the copy */}
+            <motion.div
+              className="relative mt-8 lg:hidden"
+              initial={{ opacity: 0, scale: 0.96, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="absolute -inset-3 -z-10 rounded-[2rem] bg-emerald-500/10 blur-2xl" />
+              <div className="relative overflow-hidden rounded-[1.5rem] shadow-lift ring-1 ring-ink/5">
+                <img
+                  src="/assets/hero-retriever.png"
+                  alt="A happy golden retriever running across a freshly cleaned, healthy green lawn"
+                  className="h-auto w-full object-contain"
+                />
+              </div>
+            </motion.div>
+
             <motion.p
-              className="mt-6 max-w-md text-lg leading-relaxed text-slate text-pretty"
+              className="mt-8 max-w-md text-lg leading-relaxed text-slate text-pretty lg:mt-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.42 }}
@@ -82,7 +98,7 @@ function Hero() {
             >
               {heroStats.map((s) => (
                 <motion.div key={s.label} variants={staggerItem}>
-                  <dt className="font-display text-3xl font-extrabold text-ink">
+                  <dt className="font-display text-2xl font-extrabold text-ink sm:text-3xl">
                     {s.value}
                   </dt>
                   <dd className="mt-1 text-sm text-slate">{s.label}</dd>
@@ -91,9 +107,9 @@ function Hero() {
             </motion.dl>
           </div>
 
-          {/* Hero image */}
+          {/* DESKTOP-ONLY hero image column */}
           <motion.div
-            className="relative"
+            className="relative hidden lg:block"
             initial={{ opacity: 0, scale: 0.96, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -109,7 +125,7 @@ function Hero() {
 
             {/* Floating card */}
             <motion.div
-              className="absolute -bottom-6 -left-4 flex items-center gap-3 rounded-2xl bg-white/95 px-5 py-4 shadow-soft ring-1 ring-ink/5 backdrop-blur sm:-left-8"
+              className="absolute -bottom-6 -left-8 flex items-center gap-3 rounded-2xl bg-white/95 px-5 py-4 shadow-soft ring-1 ring-ink/5 backdrop-blur"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.5 }}
@@ -159,7 +175,7 @@ function Services() {
         />
 
         <motion.div
-          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-12 grid grid-cols-2 gap-4 sm:mt-16 sm:gap-6 lg:grid-cols-4"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
@@ -173,15 +189,15 @@ function Services() {
                 variants={staggerItem}
                 whileHover={{ y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="group relative flex flex-col rounded-3xl border border-ink/5 bg-white p-7 shadow-soft"
+                className="group relative flex flex-col rounded-3xl border border-ink/5 bg-white p-5 shadow-soft sm:p-7"
               >
-                <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 transition-colors group-hover:bg-emerald-500 group-hover:text-white">
-                  {Glyph && <Glyph className="w-7 h-7" />}
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 transition-colors group-hover:bg-emerald-500 group-hover:text-white sm:h-14 sm:w-14">
+                  {Glyph && <Glyph className="w-6 h-6 sm:w-7 sm:h-7" />}
                 </span>
-                <h3 className="mt-6 font-display text-xl font-bold text-ink">
+                <h3 className="mt-4 font-display text-lg font-bold text-ink sm:mt-6 sm:text-xl">
                   {s.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate">
+                <p className="mt-2 text-sm leading-relaxed text-slate sm:mt-3">
                   {s.description}
                 </p>
               </motion.article>
@@ -192,7 +208,6 @@ function Services() {
     </section>
   )
 }
-
 
 function WhyChoose() {
   return (
@@ -214,7 +229,7 @@ function WhyChoose() {
           </div>
 
           <motion.div
-            className="grid gap-5 sm:grid-cols-2"
+            className="grid grid-cols-2 gap-4 sm:gap-5"
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-60px' }}
@@ -226,12 +241,12 @@ function WhyChoose() {
                 <motion.div
                   key={item.title}
                   variants={staggerItem}
-                  className="rounded-3xl border border-ink/5 bg-white p-7 shadow-soft"
+                  className="rounded-3xl border border-ink/5 bg-white p-5 shadow-soft sm:p-7"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-forest/5 text-forest">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-forest/5 text-forest sm:h-12 sm:w-12">
                     {Glyph && <Glyph className="w-6 h-6" />}
                   </span>
-                  <h3 className="mt-5 font-display text-lg font-bold text-ink">
+                  <h3 className="mt-4 font-display text-base font-bold text-ink sm:mt-5 sm:text-lg">
                     {item.title}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-slate">
@@ -246,8 +261,6 @@ function WhyChoose() {
     </section>
   )
 }
-
-
 
 export function FinalCTA() {
   return (
@@ -296,9 +309,7 @@ export default function Home() {
     <PageTransition>
       <Hero />
       <Services />
-      
       <WhyChoose />
-      
       <FinalCTA />
     </PageTransition>
   )
