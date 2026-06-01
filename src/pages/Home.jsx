@@ -445,7 +445,7 @@ function OneTimeCleanups() {
               Desktop (sm+): a normal three-across row. */}
           {/* Mobile/tablet: two columns with the third centered underneath.
               Desktop (lg+): all three in one row. */}
-          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
             {ONE_TIME_CLEANUPS.map((c, i) => {
               const isLastOdd =
                 i === ONE_TIME_CLEANUPS.length - 1 &&
@@ -453,31 +453,34 @@ function OneTimeCleanups() {
               return (
                 <div
                   key={c.size}
-                  className={`flex flex-col rounded-3xl border border-ink/5 bg-canvas p-7 shadow-soft ${
+                  className={`flex flex-col rounded-3xl border border-ink/5 bg-canvas p-4 shadow-soft sm:p-7 ${
                     isLastOdd
-                      ? 'col-span-2 mx-auto w-[calc(50%-0.75rem)] lg:col-span-1 lg:mx-0 lg:w-auto'
+                      ? 'col-span-2 mx-auto w-[calc(50%-0.375rem)] sm:w-[calc(50%-0.75rem)] lg:col-span-1 lg:mx-0 lg:w-auto'
                       : ''
                   }`}
                 >
-                  <span className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-emerald-600 sm:text-sm">
                     {c.size}
                   </span>
-                  <div className="mt-3 flex items-end gap-1.5">
-                    <span className="display text-5xl font-extrabold leading-none text-ink">
+                  <div className="mt-2 flex items-end gap-1 sm:mt-3 sm:gap-1.5">
+                    <span className="display text-3xl font-extrabold leading-none text-ink sm:text-5xl">
                       {money(c.price)}
                     </span>
-                    <span className="mb-1 text-sm text-slate">/ cleanup</span>
+                    <span className="mb-0.5 text-xs text-slate sm:mb-1 sm:text-sm">
+                      / cleanup
+                    </span>
                   </div>
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-slate">
+                  <p className="mt-3 flex-1 text-xs leading-relaxed text-slate sm:mt-4 sm:text-sm">
                     {c.blurb}
                   </p>
                   <Button
                     onClick={() => book(c.size, c.price)}
                     variant="outline"
                     arrow
-                    className="mt-6 w-full"
+                    className="mt-4 w-full sm:mt-6"
                   >
-                    Book this cleanup
+                    <span className="sm:hidden">Book</span>
+                    <span className="hidden sm:inline">Book this cleanup</span>
                   </Button>
                 </div>
               )
