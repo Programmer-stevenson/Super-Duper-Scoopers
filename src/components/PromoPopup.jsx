@@ -4,13 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Button from './ui/Button'
 import Icon from './ui/Icon'
 
-// One-time cleanup pricing by yard size.
-const ONE_TIME_PRICES = [
-  { label: 'Small', price: 50 },
-  { label: 'Medium', price: 75 },
-  { label: 'Big', price: 100 },
-]
-
 // True once the promo has shown during this page load. This module-level flag
 // resets only on a full page load/refresh — NOT on client-side navigation
 // between pages — so the popup won't re-fire when you return to Home.
@@ -109,17 +102,7 @@ export default function PromoPopup() {
               <p className="text-center text-xs leading-relaxed text-slate">
                 New here? Your first cleanup is half price — no contracts.
               </p>
-              <ul className="mt-3 grid grid-cols-3 gap-1.5 text-center">
-                {ONE_TIME_PRICES.map((p) => (
-                  <li key={p.label} className="rounded-lg border border-ink/5 bg-canvas py-1.5">
-                    <span className="block font-display text-base font-extrabold text-ink">
-                      ${p.price}
-                    </span>
-                    <span className="block text-[10px] text-slate">{p.label}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button onClick={claim} size="sm" arrow className="mt-3 w-full">
+              <Button onClick={claim} size="sm" arrow className="mt-4 w-full">
                 Claim 50% off
               </Button>
               <button

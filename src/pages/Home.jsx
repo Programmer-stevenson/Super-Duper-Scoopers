@@ -35,6 +35,13 @@ const FIRST_TIME_DISCOUNT = 0.5 // 50% off the first visit
 // Format money without trailing .00 (but keeps cents when needed, e.g. $10.50).
 const money = (n) => (Number.isInteger(n) ? `$${n}` : `$${n.toFixed(2)}`)
 
+// One-time cleanup pricing by yard size (no recurring plan required).
+const ONE_TIME_CLEANUPS = [
+  { size: 'Small yard', price: 50, blurb: 'Apartments, townhomes, and small yards or patios.' },
+  { size: 'Medium yard', price: 75, blurb: 'A typical suburban backyard that needs a full reset.' },
+  { size: 'Big yard', price: 100, blurb: 'Large, multi-dog, or extra-overgrown yards.' },
+]
+
 function Hero() {
   return (
     <section className="relative overflow-hidden bg-canvas pt-[72px]">
@@ -96,7 +103,7 @@ function Hero() {
             </motion.p>
 
             <motion.div
-              className="mt-8 flex flex-wrap items-center gap-4"
+              className="mt-8 flex flex-wrap items-center justify-center gap-4 lg:justify-start"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.52 }}
@@ -411,6 +418,69 @@ function QuoteCalculator() {
   )
 }
 
+function OneTimeCleanups() {
+  const navigate = useNavigate()
+
+  const book = (size, price) => {
+    navigate('/contact', {
+      state: {
+        quote: {
+          summary: `a one-time ${size.toLowerCase()} cleanup (${money(price)})`,
+        },
+      },
+    })
+  }
+
+  return (
+    <section className="relative bg-white py-24">
+      <div className="max-w-site container-px">
+        <SectionHeading
+          eyebrow="One-time cleanups"
+          title="Just need a one-time reset?"
+          lead="Moving in, hosting guests, or let things pile up over the winter? Book a single deep cleanup — a flat price by yard size, with no recurring plan required."
+        />
+
+        <Reveal className="mt-14">
+          <div className="grid gap-6 sm:grid-cols-3">
+            {ONE_TIME_CLEANUPS.map((c) => (
+              <div
+                key={c.size}
+                className="flex flex-col rounded-3xl border border-ink/5 bg-canvas p-7 shadow-soft"
+              >
+                <span className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
+                  {c.size}
+                </span>
+                <div className="mt-3 flex items-end gap-1.5">
+                  <span className="display text-5xl font-extrabold leading-none text-ink">
+                    {money(c.price)}
+                  </span>
+                  <span className="mb-1 text-sm text-slate">/ cleanup</span>
+                </div>
+                <p className="mt-4 flex-1 text-sm leading-relaxed text-slate">
+                  {c.blurb}
+                </p>
+                <Button
+                  onClick={() => book(c.size, c.price)}
+                  variant="outline"
+                  arrow
+                  className="mt-6 w-full"
+                >
+                  Book this cleanup
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-7 text-center text-sm text-slate">
+            First-time customer? Your first cleanup is{' '}
+            <span className="font-semibold text-forest">50% off</span>.
+          </p>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 function Services() {
   return (
     <section className="relative bg-canvas py-24">
@@ -503,8 +573,11 @@ export default function Home() {
     <PageTransition>
       <PromoPopup />
       <Hero />
-      <QuoteCalculator />
       <Services />
+      <OneTimeCleanups />
+      <QuoteCalculator />
+      
+      
       <FinalCTA />
     </PageTransition>
   )
