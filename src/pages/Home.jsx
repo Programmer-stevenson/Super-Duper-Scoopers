@@ -441,34 +441,47 @@ function OneTimeCleanups() {
         />
 
         <Reveal className="mt-14">
-          <div className="grid gap-6 sm:grid-cols-3">
-            {ONE_TIME_CLEANUPS.map((c) => (
-              <div
-                key={c.size}
-                className="flex flex-col rounded-3xl border border-ink/5 bg-canvas p-7 shadow-soft"
-              >
-                <span className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
-                  {c.size}
-                </span>
-                <div className="mt-3 flex items-end gap-1.5">
-                  <span className="display text-5xl font-extrabold leading-none text-ink">
-                    {money(c.price)}
-                  </span>
-                  <span className="mb-1 text-sm text-slate">/ cleanup</span>
-                </div>
-                <p className="mt-4 flex-1 text-sm leading-relaxed text-slate">
-                  {c.blurb}
-                </p>
-                <Button
-                  onClick={() => book(c.size, c.price)}
-                  variant="outline"
-                  arrow
-                  className="mt-6 w-full"
+          {/* Mobile: two columns with the third centered underneath.
+              Desktop (sm+): a normal three-across row. */}
+          {/* Mobile/tablet: two columns with the third centered underneath.
+              Desktop (lg+): all three in one row. */}
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
+            {ONE_TIME_CLEANUPS.map((c, i) => {
+              const isLastOdd =
+                i === ONE_TIME_CLEANUPS.length - 1 &&
+                ONE_TIME_CLEANUPS.length % 2 === 1
+              return (
+                <div
+                  key={c.size}
+                  className={`flex flex-col rounded-3xl border border-ink/5 bg-canvas p-7 shadow-soft ${
+                    isLastOdd
+                      ? 'col-span-2 mx-auto w-[calc(50%-0.75rem)] lg:col-span-1 lg:mx-0 lg:w-auto'
+                      : ''
+                  }`}
                 >
-                  Book this cleanup
-                </Button>
-              </div>
-            ))}
+                  <span className="text-sm font-semibold uppercase tracking-wide text-emerald-600">
+                    {c.size}
+                  </span>
+                  <div className="mt-3 flex items-end gap-1.5">
+                    <span className="display text-5xl font-extrabold leading-none text-ink">
+                      {money(c.price)}
+                    </span>
+                    <span className="mb-1 text-sm text-slate">/ cleanup</span>
+                  </div>
+                  <p className="mt-4 flex-1 text-sm leading-relaxed text-slate">
+                    {c.blurb}
+                  </p>
+                  <Button
+                    onClick={() => book(c.size, c.price)}
+                    variant="outline"
+                    arrow
+                    className="mt-6 w-full"
+                  >
+                    Book this cleanup
+                  </Button>
+                </div>
+              )
+            })}
           </div>
 
           <p className="mt-7 text-center text-sm text-slate">
@@ -576,8 +589,6 @@ export default function Home() {
       <Services />
       <OneTimeCleanups />
       <QuoteCalculator />
-      
-      
       <FinalCTA />
     </PageTransition>
   )

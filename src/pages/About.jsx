@@ -58,7 +58,7 @@ function AboutHero() {
           >
             Super Duper Scooper began when our founder got tired of choosing
             between playing with his dogs and policing the yard. What started as
-            a favor for a few neighbors became a service trusted by many.
+            a favor for a few neighbors became a service trusted by thousands.
           </motion.p>
         </div>
       </div>
@@ -77,7 +77,7 @@ function Story() {
               <img
                 src="/assets/logo-scooper.png"
                 alt="A golden retriever enjoying a clean, healthy backyard lawn"
-                className="h-[440px] w-full rounded-[2rem] object-cover shadow-lift ring-1 ring-ink/5"
+                className="h-auto w-full rounded-[2rem] object-contain shadow-lift ring-1 ring-ink/5 lg:h-[440px] lg:object-cover"
               />
             </div>
           </Reveal>
